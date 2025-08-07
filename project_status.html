@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="refresh" content="3"> <!-- تحديث كل 3 ثوانٍ -->
+  <title>حالة مشروع أعجوبة</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
+    body{font-family:'Cairo',sans-serif;background:#fafafa;margin:0;padding:1.5rem;}
+    h1{margin:0 0 1rem;color:#2575fc;text-align:center;}
+    table{width:100%;border-collapse:collapse;direction:rtl;}
+    th,td{border:1px solid #ddd;padding:.6rem;text-align:center;font-size:.95rem;}
+    th{background:#2575fc;color:#fff;}
+    tr:nth-child(even){background:#f9f9f9;}
+    /* شريط تقدّم ملوّن داخل خلية النسبة */
+    .progress-container{background:#eaeaea;border-radius:6px;overflow:hidden;position:relative;height:20px;}
+    .progress-bar{height:100%;display:block;color:#fff;font-size:.8rem;line-height:20px;text-align:center;white-space:nowrap;}
+    .bar-100{width:100%;background:#28a745;}
+    .bar-90{width:90%;background:#34c38f;}
+    .bar-80{width:80%;background:#5bc0de;}
+    .bar-30{width:30%;background:#ffc107;}
+    .bar-25{width:25%;background:#fd7e14;}
+    .bar-15{width:15%;background:#fd7e14;}
+    .bar-10{width:10%;background:#ff4d4f;}
+    .bar-5{width:5%;background:#ff4d4f;}
+    .bar-0{width:0%;background:#6c757d;}
+  </style>
+</head>
+<body>
+  <h1>حالة مشروع أعجوبة – تحديث كل 3 ثوانٍ</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>المرحلة</th>
+        <th>النسبة</th>
+        <th>السرعة</th>
+        <th>الخطوة التالية</th>
+        <th>ما تمّ تنفيذه</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>إعداد البيئة</td>
+        <td><div class="progress-container"><span class="progress-bar bar-100">100%</span></div></td>
+        <td>سريعة</td><td>—</td><td>Laravel + DB</td>
+      </tr>
+      <tr>
+        <td>RFC المبدئي</td>
+        <td><div class="progress-container"><span class="progress-bar bar-90">90%</span></div></td>
+        <td>متوسطة</td><td>اعتماد نهائي</td><td>مسودة جاهزة</td>
+      </tr>
+      <tr>
+        <td>تقسيم المهام</td>
+        <td><div class="progress-container"><span class="progress-bar bar-80">80%</span></div></td>
+        <td>سريعة</td><td>إنشاء GitHub Issues</td><td>قائمة أولية</td>
+      </tr>
+      <tr>
+        <td>تدريب الأساسيات</td>
+        <td><div class="progress-container"><span class="progress-bar bar-25">25%</span></div></td>
+        <td>ثابتة</td><td>جلسات PHP/Laravel</td><td>5 كاتا تمّت</td>
+      </tr>
+      <tr>
+        <td>التصميم المعماري</td>
+        <td><div class="progress-container"><span class="progress-bar bar-30">30%</span></div></td>
+        <td>متوسطة</td><td>توثيق الطبقات</td><td>مخطط أولي</td>
+      </tr>
+      <tr>
+        <td>مولّد الكود</td>
+        <td><div class="progress-container"><span class="progress-bar bar-15">15%</span></div></td>
+        <td>بطيئة</td><td>إعداد CLI Prototype</td><td>بحث تقني</td>
+      </tr>
+      <tr>
+        <td>UX/UI</td>
+        <td><div class="progress-container"><span class="progress-bar bar-10">10%</span></div></td>
+        <td>بطيئة</td><td>إعداد Style-Guide</td><td>مرجع ألوان</td>
+      </tr>
+      <tr>
+        <td>الاختبارات</td>
+        <td><div class="progress-container"><span class="progress-bar bar-0">0%</span></div></td>
+        <td>—</td><td>إعداد PHPUnit</td><td>—</td>
+      </tr>
+      <tr>
+        <td>التوثيق</td>
+        <td><div class="progress-container"><span class="progress-bar bar-5">5%</span></div></td>
+        <td>بطيئة</td><td>تنظيم Wiki</td><td>صفحة رئيسية</td>
+      </tr>
+    </tbody>
+  </table>
+</body>
+</html>
