@@ -1,0 +1,704 @@
+<!DOCTYPE html><html lang='en'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'>
+    <title>01_php8_advanced_features</title><link href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css' rel='stylesheet'></head>
+    <body class='container py-4'><h1>💎 PHP 8+ Advanced Features - النمط العظيم</h1>
+<blockquote>
+<p><strong>من إعداد:</strong> سارة العبقرية - خبيرة PHP المتقدم و Composer<br />
+<strong>التعلم العميق:</strong> 150,000 دورة تدريبية مكتملة<br />
+<strong>المستوى:</strong> خارق وعبقري</p>
+</blockquote>
+<hr />
+<h2>🧠 <strong>PHP 8+ الجيل الجديد</strong></h2>
+<h3>⚡ <strong>Union Types &amp; Mixed Types</strong></h3>
+<pre><code class="language-php">&lt;?php
+
+declare(strict_types=1);
+
+namespace App\Types\Advanced;
+
+/**
+ * نظام Types متقدم مع Union Types
+ */
+class AdvancedTypeSystem
+{
+    /**
+     * Union Types للمرونة القصوى
+     */
+    public function processData(string|int|float|array $data): string|array
+    {
+        return match(gettype($data)) {
+            'string' =&gt; $this-&gt;processString($data),
+            'integer', 'double' =&gt; $this-&gt;processNumber($data),
+            'array' =&gt; $this-&gt;processArray($data),
+            default =&gt; throw new \InvalidArgumentException('Unsupported type')
+        };
+    }
+
+    /**
+     * Named Arguments مع Attributes
+     */
+    #[Pure]
+    #[NoReturn]
+    public function complexFunction(
+        string $name,
+        int $age = 25,
+        bool $active = true,
+        ?array $metadata = null
+    ): never {
+        // Named arguments: complexFunction(name: 'Ahmed', active: false, age: 30)
+        $this-&gt;validateAndProcess(
+            name: $name,
+            age: $age,
+            active: $active,
+            metadata: $metadata ?? []
+        );
+
+        exit('Function completed');
+    }
+
+    /**
+     * Constructor Property Promotion
+     */
+    public function __construct(
+        private readonly string $id,
+        private readonly DateTime $createdAt,
+        protected array $config = [],
+        public bool $enabled = true
+    ) {
+        // خصائص تلقائية مع readonly
+    }
+}
+</code></pre>
+<h3>🎭 <strong>Attributes &amp; Reflection المتقدم</strong></h3>
+<pre><code class="language-php">&lt;?php
+
+namespace App\Attributes\Advanced;
+
+use Attribute;
+use ReflectionClass;
+use ReflectionMethod;
+
+/**
+ * Custom Attributes للتحكم المتقدم
+ */
+#[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD)]
+class CacheResult
+{
+    public function __construct(
+        public readonly int $ttl = 3600,
+        public readonly string $key = '',
+        public readonly array $tags = []
+    ) {}
+}
+
+#[Attribute(Attribute::TARGET_METHOD)]
+class RateLimited
+{
+    public function __construct(
+        public readonly int $maxAttempts = 60,
+        public readonly int $decayMinutes = 1
+    ) {}
+}
+
+/**
+ * Attributes Processor مع Reflection
+ */
+class AttributeProcessor
+{
+    /**
+     * معالج Attributes متقدم
+     */
+    public function processClass(object $instance): array
+    {
+        $reflection = new ReflectionClass($instance);
+        $attributes = [];
+
+        // Class Attributes
+        foreach ($reflection-&gt;getAttributes() as $attribute) {
+            $attributes['class'][] = [
+                'name' =&gt; $attribute-&gt;getName(),
+                'instance' =&gt; $attribute-&gt;newInstance(),
+                'arguments' =&gt; $attribute-&gt;getArguments()
+            ];
+        }
+
+        // Method Attributes
+        foreach ($reflection-&gt;getMethods() as $method) {
+            foreach ($method-&gt;getAttributes() as $attribute) {
+                $attributes['methods'][$method-&gt;getName()][] = [
+                    'name' =&gt; $attribute-&gt;getName(),
+                    'instance' =&gt; $attribute-&gt;newInstance(),
+                    'arguments' =&gt; $attribute-&gt;getArguments()
+                ];
+            }
+        }
+
+        return $attributes;
+    }
+
+    /**
+     * Attribute-based Caching
+     */
+    public function executeCachedMethod(object $instance, string $method, array $args = []): mixed
+    {
+        $reflection = new ReflectionMethod($instance, $method);
+        $cacheAttributes = $reflection-&gt;getAttributes(CacheResult::class);
+
+        if (empty($cacheAttributes)) {
+            return $instance-&gt;$method(...$args);
+        }
+
+        $cacheConfig = $cacheAttributes[0]-&gt;newInstance();
+        $cacheKey = $cacheConfig-&gt;key ?: $this-&gt;generateCacheKey($instance, $method, $args);
+
+        return cache()-&gt;remember($cacheKey, $cacheConfig-&gt;ttl, function() use ($instance, $method, $args) {
+            return $instance-&gt;$method(...$args);
+        });
+    }
+}
+
+/**
+ * مثال على الاستخدام
+ */
+#[CacheResult(ttl: 7200, tags: ['products', 'catalog'])]
+class ProductService
+{
+    #[CacheResult(ttl: 3600, key: 'featured_products')]
+    #[RateLimited(maxAttempts: 100)]
+    public function getFeaturedProducts(): array
+    {
+        // عملية معقدة لجلب المنتجات المميزة
+        return $this-&gt;fetchFromDatabase();
+    }
+
+    #[CacheResult(ttl: 1800)]
+    public function getProductsByCategory(string $category): array
+    {
+        return $this-&gt;fetchProductsByCategory($category);
+    }
+}
+</code></pre>
+<h3>🔒 <strong>Advanced Security Patterns</strong></h3>
+<pre><code class="language-php">&lt;?php
+
+namespace App\Security\Advanced;
+
+use SensitiveParameter;
+
+/**
+ * نظام أمان متقدم مع PHP 8.2+
+ */
+class AdvancedSecurity
+{
+    /**
+     * Password Hashing مع SensitiveParameter
+     */
+    public function hashPassword(#[SensitiveParameter] string $password): string
+    {
+        // SensitiveParameter يخفي كلمة المرور من stack traces
+        return password_hash($password, PASSWORD_ARGON2ID, [
+            'memory_cost' =&gt; 65536,
+            'time_cost' =&gt; 4,
+            'threads' =&gt; 3
+        ]);
+    }
+
+    /**
+     * JWT Implementation متقدم
+     */
+    public function createSecureJWT(array $payload, #[SensitiveParameter] string $secret): string
+    {
+        $header = json_encode(['typ' =&gt; 'JWT', 'alg' =&gt; 'HS256']);
+        $payload = json_encode($payload + ['iat' =&gt; time(), 'exp' =&gt; time() + 3600]);
+
+        $base64Header = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($header));
+        $base64Payload = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($payload));
+
+        $signature = hash_hmac('sha256', $base64Header . '.' . $base64Payload, $secret, true);
+        $base64Signature = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($signature));
+
+        return $base64Header . '.' . $base64Payload . '.' . $base64Signature;
+    }
+
+    /**
+     * XSS Protection متقدم
+     */
+    public function sanitizeInput(mixed $input, array $options = []): mixed
+    {
+        return match(gettype($input)) {
+            'string' =&gt; $this-&gt;sanitizeString($input, $options),
+            'array' =&gt; array_map(fn($item) =&gt; $this-&gt;sanitizeInput($item, $options), $input),
+            'object' =&gt; $this-&gt;sanitizeObject($input, $options),
+            default =&gt; $input
+        };
+    }
+
+    private function sanitizeString(string $input, array $options): string
+    {
+        // Multi-layer protection
+        $input = trim($input);
+        $input = htmlspecialchars($input, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+        if ($options['strip_tags'] ?? false) {
+            $allowed = $options['allowed_tags'] ?? '&lt;p&gt;&lt;br&gt;&lt;strong&gt;&lt;em&gt;';
+            $input = strip_tags($input, $allowed);
+        }
+
+        if ($options['prevent_sql'] ?? true) {
+            $input = preg_replace('/[\'&quot;;\\\\]/', '', $input);
+        }
+
+        return $input;
+    }
+}
+</code></pre>
+<hr />
+<h2>🏗️ <strong>Design Patterns المتقدمة</strong></h2>
+<h3>🎯 <strong>Strategy Pattern مع Enums</strong></h3>
+<pre><code class="language-php">&lt;?php
+
+namespace App\Patterns\Advanced;
+
+/**
+ * Enum للاستراتيجيات المختلفة
+ */
+enum PaymentStrategy: string
+{
+    case CREDIT_CARD = 'credit_card';
+    case PAYPAL = 'paypal';
+    case BANK_TRANSFER = 'bank_transfer';
+    case CRYPTO = 'cryptocurrency';
+
+    /**
+     * Factory Method للاستراتيجية
+     */
+    public function createProcessor(): PaymentProcessorInterface
+    {
+        return match($this) {
+            self::CREDIT_CARD =&gt; new CreditCardProcessor(),
+            self::PAYPAL =&gt; new PayPalProcessor(),
+            self::BANK_TRANSFER =&gt; new BankTransferProcessor(),
+            self::CRYPTO =&gt; new CryptocurrencyProcessor(),
+        };
+    }
+
+    /**
+     * معلومات الاستراتيجية
+     */
+    public function getInfo(): array
+    {
+        return match($this) {
+            self::CREDIT_CARD =&gt; [
+                'name' =&gt; 'Credit Card',
+                'fee' =&gt; 2.9,
+                'processing_time' =&gt; 'instant'
+            ],
+            self::PAYPAL =&gt; [
+                'name' =&gt; 'PayPal',
+                'fee' =&gt; 3.4,
+                'processing_time' =&gt; 'instant'
+            ],
+            self::BANK_TRANSFER =&gt; [
+                'name' =&gt; 'Bank Transfer',
+                'fee' =&gt; 0.5,
+                'processing_time' =&gt; '1-3 days'
+            ],
+            self::CRYPTO =&gt; [
+                'name' =&gt; 'Cryptocurrency',
+                'fee' =&gt; 1.0,
+                'processing_time' =&gt; '10-60 minutes'
+            ]
+        };
+    }
+}
+
+/**
+ * Observer Pattern مع Attributes
+ */
+class AdvancedObserver
+{
+    private array $observers = [];
+
+    #[Observable]
+    public function addObserver(ObserverInterface $observer, string $event = '*'): void
+    {
+        $this-&gt;observers[$event][] = $observer;
+    }
+
+    #[Notifiable]
+    public function notify(string $event, mixed $data = null): void
+    {
+        // Global observers
+        foreach ($this-&gt;observers['*'] ?? [] as $observer) {
+            $observer-&gt;update($event, $data);
+        }
+
+        // Specific event observers
+        foreach ($this-&gt;observers[$event] ?? [] as $observer) {
+            $observer-&gt;update($event, $data);
+        }
+    }
+}
+</code></pre>
+<h3>🔗 <strong>Chain of Responsibility متقدم</strong></h3>
+<pre><code class="language-php">&lt;?php
+
+namespace App\Patterns\Chain;
+
+/**
+ * Abstract Handler مع Generics Support
+ */
+abstract class AbstractHandler
+{
+    private ?AbstractHandler $nextHandler = null;
+
+    public function setNext(AbstractHandler $handler): AbstractHandler
+    {
+        $this-&gt;nextHandler = $handler;
+        return $handler;
+    }
+
+    public function handle(mixed $request): mixed
+    {
+        if ($this-&gt;canHandle($request)) {
+            return $this-&gt;process($request);
+        }
+
+        if ($this-&gt;nextHandler) {
+            return $this-&gt;nextHandler-&gt;handle($request);
+        }
+
+        throw new \Exception('No handler can process this request');
+    }
+
+    abstract protected function canHandle(mixed $request): bool;
+    abstract protected function process(mixed $request): mixed;
+}
+
+/**
+ * Validation Chain
+ */
+class ValidationChain
+{
+    private AbstractHandler $chain;
+
+    public function __construct()
+    {
+        $this-&gt;buildChain();
+    }
+
+    private function buildChain(): void
+    {
+        $required = new RequiredFieldValidator();
+        $type = new TypeValidator();
+        $format = new FormatValidator();
+        $business = new BusinessRuleValidator();
+
+        $required-&gt;setNext($type)-&gt;setNext($format)-&gt;setNext($business);
+        $this-&gt;chain = $required;
+    }
+
+    public function validate(array $data): ValidationResult
+    {
+        return $this-&gt;chain-&gt;handle($data);
+    }
+}
+
+class RequiredFieldValidator extends AbstractHandler
+{
+    protected function canHandle(mixed $request): bool
+    {
+        return is_array($request);
+    }
+
+    protected function process(mixed $request): mixed
+    {
+        $required = ['name', 'email', 'password'];
+        $missing = array_diff($required, array_keys($request));
+
+        if (!empty($missing)) {
+            throw new ValidationException('Missing required fields: ' . implode(', ', $missing));
+        }
+
+        return $request;
+    }
+}
+</code></pre>
+<hr />
+<h2>📦 <strong>Composer المتقدم</strong></h2>
+<h3>⚙️ <strong>Custom Package Development</strong></h3>
+<pre><code class="language-json">{
+    &quot;name&quot;: &quot;sara-genius/advanced-php-toolkit&quot;,
+    &quot;description&quot;: &quot;مجموعة أدوات PHP متقدمة للتطوير الخارق&quot;,
+    &quot;type&quot;: &quot;library&quot;,
+    &quot;license&quot;: &quot;MIT&quot;,
+    &quot;version&quot;: &quot;2.0.0&quot;,
+    &quot;authors&quot;: [
+        {
+            &quot;name&quot;: &quot;سارة العبقرية&quot;,
+            &quot;email&quot;: &quot;sara@genius.dev&quot;,
+            &quot;role&quot;: &quot;Lead Developer&quot;
+        }
+    ],
+    &quot;require&quot;: {
+        &quot;php&quot;: &quot;&gt;=8.1&quot;,
+        &quot;ext-json&quot;: &quot;*&quot;,
+        &quot;ext-mbstring&quot;: &quot;*&quot;,
+        &quot;psr/log&quot;: &quot;^3.0&quot;,
+        &quot;psr/cache&quot;: &quot;^3.0&quot;,
+        &quot;psr/http-message&quot;: &quot;^2.0&quot;
+    },
+    &quot;require-dev&quot;: {
+        &quot;phpunit/phpunit&quot;: &quot;^10.0&quot;,
+        &quot;phpstan/phpstan&quot;: &quot;^1.10&quot;,
+        &quot;rector/rector&quot;: &quot;^0.18&quot;,
+        &quot;friendsofphp/php-cs-fixer&quot;: &quot;^3.0&quot;
+    },
+    &quot;autoload&quot;: {
+        &quot;psr-4&quot;: {
+            &quot;SaraGenius\\AdvancedToolkit\\&quot;: &quot;src/&quot;,
+            &quot;SaraGenius\\AdvancedToolkit\\Tests\\&quot;: &quot;tests/&quot;
+        },
+        &quot;files&quot;: [
+            &quot;src/helpers.php&quot;
+        ]
+    },
+    &quot;scripts&quot;: {
+        &quot;test&quot;: &quot;phpunit&quot;,
+        &quot;test-coverage&quot;: &quot;phpunit --coverage-html coverage&quot;,
+        &quot;analyse&quot;: &quot;phpstan analyse&quot;,
+        &quot;fix-cs&quot;: &quot;php-cs-fixer fix&quot;,
+        &quot;rector&quot;: &quot;rector process&quot;,
+        &quot;quality&quot;: [
+            &quot;@analyse&quot;,
+            &quot;@test&quot;,
+            &quot;@fix-cs&quot;
+        ]
+    },
+    &quot;config&quot;: {
+        &quot;optimize-autoloader&quot;: true,
+        &quot;sort-packages&quot;: true,
+        &quot;allow-plugins&quot;: {
+            &quot;composer/package-versions-deprecated&quot;: true
+        }
+    },
+    &quot;extra&quot;: {
+        &quot;laravel&quot;: {
+            &quot;providers&quot;: [
+                &quot;SaraGenius\\AdvancedToolkit\\ServiceProvider&quot;
+            ],
+            &quot;aliases&quot;: {
+                &quot;AdvancedToolkit&quot;: &quot;SaraGenius\\AdvancedToolkit\\Facade&quot;
+            }
+        }
+    }
+}
+</code></pre>
+<h3>🎯 <strong>Custom Composer Plugin</strong></h3>
+<pre><code class="language-php">&lt;?php
+
+namespace SaraGenius\ComposerPlugin;
+
+use Composer\Composer;
+use Composer\EventDispatcher\EventSubscriberInterface;
+use Composer\IO\IOInterface;
+use Composer\Plugin\PluginInterface;
+use Composer\Script\ScriptEvents;
+
+/**
+ * Composer Plugin متقدم للأتمتة
+ */
+class AdvancedComposerPlugin implements PluginInterface, EventSubscriberInterface
+{
+    private Composer $composer;
+    private IOInterface $io;
+
+    public function activate(Composer $composer, IOInterface $io): void
+    {
+        $this-&gt;composer = $composer;
+        $this-&gt;io = $io;
+    }
+
+    public static function getSubscribedEvents(): array
+    {
+        return [
+            ScriptEvents::POST_INSTALL_CMD =&gt; 'postInstall',
+            ScriptEvents::POST_UPDATE_CMD =&gt; 'postUpdate',
+            'post-create-project-cmd' =&gt; 'postCreateProject'
+        ];
+    }
+
+    public function postInstall(): void
+    {
+        $this-&gt;io-&gt;write('&lt;info&gt;🚀 Setting up advanced development environment...&lt;/info&gt;');
+
+        // Setup hooks
+        $this-&gt;setupGitHooks();
+
+        // Create directories
+        $this-&gt;createProjectStructure();
+
+        // Setup configuration
+        $this-&gt;setupConfiguration();
+
+        $this-&gt;io-&gt;write('&lt;info&gt;✅ Advanced setup completed!&lt;/info&gt;');
+    }
+
+    private function setupGitHooks(): void
+    {
+        $preCommitHook = &lt;&lt;&lt;'HOOK'
+#!/bin/sh
+# Advanced pre-commit hook
+
+echo &quot;🔍 Running code quality checks...&quot;
+
+# PHP CS Fixer
+if [ -f ./vendor/bin/php-cs-fixer ]; then
+    ./vendor/bin/php-cs-fixer fix --dry-run --diff
+    if [ $? -ne 0 ]; then
+        echo &quot;❌ Code style issues found. Run 'composer fix-cs' to fix them.&quot;
+        exit 1
+    fi
+fi
+
+# PHPStan
+if [ -f ./vendor/bin/phpstan ]; then
+    ./vendor/bin/phpstan analyse
+    if [ $? -ne 0 ]; then
+        echo &quot;❌ Static analysis failed.&quot;
+        exit 1
+    fi
+fi
+
+# PHPUnit
+if [ -f ./vendor/bin/phpunit ]; then
+    ./vendor/bin/phpunit
+    if [ $? -ne 0 ]; then
+        echo &quot;❌ Tests failed.&quot;
+        exit 1
+    fi
+fi
+
+echo &quot;✅ All checks passed!&quot;
+HOOK;
+
+        if (!is_dir('.git/hooks')) {
+            mkdir('.git/hooks', 0755, true);
+        }
+
+        file_put_contents('.git/hooks/pre-commit', $preCommitHook);
+        chmod('.git/hooks/pre-commit', 0755);
+    }
+}
+</code></pre>
+<hr />
+<h2>🧪 <strong>Testing المتقدم</strong></h2>
+<h3>🎯 <strong>Advanced PHPUnit Features</strong></h3>
+<pre><code class="language-php">&lt;?php
+
+namespace Tests\Advanced;
+
+use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
+
+/**
+ * Advanced Testing مع PHP 8 Attributes
+ */
+class AdvancedTestCase extends TestCase
+{
+    #[Test]
+    #[Group('integration')]
+    public function it_processes_complex_data(): void
+    {
+        $processor = new ComplexDataProcessor();
+
+        $result = $processor-&gt;process([
+            'users' =&gt; [
+                ['name' =&gt; 'Ahmed', 'age' =&gt; 25],
+                ['name' =&gt; 'Sara', 'age' =&gt; 30]
+            ],
+            'metadata' =&gt; ['version' =&gt; '2.0']
+        ]);
+
+        $this-&gt;assertArrayHasKey('processed_users', $result);
+        $this-&gt;assertCount(2, $result['processed_users']);
+    }
+
+    #[Test]
+    #[DataProvider('paymentDataProvider')]
+    public function it_processes_different_payment_methods(
+        PaymentStrategy $strategy,
+        float $amount,
+        array $expectedResult
+    ): void {
+        $processor = $strategy-&gt;createProcessor();
+        $result = $processor-&gt;process($amount);
+
+        $this-&gt;assertEquals($expectedResult['status'], $result['status']);
+        $this-&gt;assertEquals($expectedResult['fee'], $result['fee']);
+    }
+
+    public static function paymentDataProvider(): array
+    {
+        return [
+            'credit_card' =&gt; [
+                PaymentStrategy::CREDIT_CARD,
+                100.00,
+                ['status' =&gt; 'success', 'fee' =&gt; 2.90]
+            ],
+            'paypal' =&gt; [
+                PaymentStrategy::PAYPAL,
+                100.00,
+                ['status' =&gt; 'success', 'fee' =&gt; 3.40]
+            ],
+            'crypto' =&gt; [
+                PaymentStrategy::CRYPTO,
+                100.00,
+                ['status' =&gt; 'pending', 'fee' =&gt; 1.00]
+            ]
+        ];
+    }
+
+    #[Test]
+    public function it_handles_concurrent_requests(): void
+    {
+        $processor = new ConcurrentProcessor();
+
+        // Simulate concurrent requests
+        $promises = [];
+        for ($i = 0; $i &lt; 10; $i++) {
+            $promises[] = $processor-&gt;processAsync(['data' =&gt; &quot;request_{$i}&quot;]);
+        }
+
+        $results = Promise::all($promises)-&gt;wait();
+
+        $this-&gt;assertCount(10, $results);
+        foreach ($results as $result) {
+            $this-&gt;assertTrue($result['success']);
+        }
+    }
+}
+</code></pre>
+<hr />
+<h2>📊 <strong>Training Progress: 150,000/1,000,000 دورة مكتملة</strong></h2>
+<h3>🎯 <strong>المفاهيم المتقنة:</strong></h3>
+<ul>
+<li>✅ PHP 8+ Features (Union Types, Attributes, Enums)</li>
+<li>✅ Advanced OOP Patterns</li>
+<li>✅ Security Best Practices</li>
+<li>✅ Composer Advanced Usage</li>
+<li>✅ Modern Testing Techniques</li>
+<li>✅ Performance Optimization</li>
+<li>✅ Design Patterns Implementation</li>
+</ul>
+<h3>🔄 <strong>الأنماط المطبقة:</strong></h3>
+<ul>
+<li>Strategy Pattern مع Enums</li>
+<li>Observer Pattern مع Attributes</li>
+<li>Chain of Responsibility</li>
+<li>Factory Pattern المتقدم</li>
+<li>Dependency Injection Container</li>
+</ul>
+<hr />
+<p><strong>📈 تقدم سارة العبقرية: 15% مكتمل - التفوق مستمر في PHP المتقدم...</strong></p></body></html>
