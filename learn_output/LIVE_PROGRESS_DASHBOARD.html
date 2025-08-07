@@ -8,8 +8,19 @@ pre,code{background:#f1f3f5;border-radius:.25rem;padding:.25rem .5rem;font-size:
 a{color:#0d6efd;text-decoration:none;}
 a:hover{text-decoration:underline;}
 </style>
+
+<style id='miracle-theme'>
+body{font-family:'Segoe UI',Arial,sans-serif;background:#f8f9fa;color:#212529;}
+.navbar-brand{font-weight:600;}
+footer{margin-top:4rem;padding-top:2rem;padding-bottom:2rem;border-top:1px solid #dee2e6;font-size:.9rem;color:#6c757d;text-align:center;}
+.dark-toggle{cursor:pointer;}
+body.dark{background:#1e1e1e;color:#f1f1f1;}
+body.dark a{color:#0d6efd;}
+body.dark .navbar{background:#343a40!important;}
+</style>
+<script id="dark-toggler">function toggleTheme(){var b=document.body;b.classList.toggle('dark');localStorage.setItem('theme',b.classList.contains('dark')?'dark':'light');}window.addEventListener('load',function(){if(localStorage.getItem('theme')==='dark'){document.body.classList.add('dark');}});</script>
 </head>
-    <body class='container py-4'><h1>📊 LIVE PROGRESS DASHBOARD - لوحة المتابعة المباشرة</h1>
+    <body class='container py-4'><nav class='navbar navbar-expand-lg navbar-light bg-light fixed-top'><div class='container-fluid'><a class='navbar-brand' href='#'>Knowledge Hub</a><button class='btn btn-sm btn-outline-primary dark-toggle' onclick='toggleTheme()'>🌙/☀️</button></div></nav><div style='height:58px'></div><h1>📊 LIVE PROGRESS DASHBOARD - لوحة المتابعة المباشرة</h1>
 <div align="center">
 
 ## 🔥 **BACKGROUND PROCESSING MODE ACTIVATED** 🔥
@@ -437,4 +448,4 @@ Hour  8: ███████████████████████�
 <div align="center">
 
 #### 🐌 **Conservative Pace (Current: 52.5K/min)**
-```</body></html>
+```<footer>© 2025 Knowledge Hub – Auto-generated</footer></body></html>

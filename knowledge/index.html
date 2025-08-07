@@ -11,7 +11,18 @@ a{color:#0d6efd;text-decoration:none;}
 a:hover{text-decoration:underline;}
 </style>
 
-</head><body class='container py-5'>
+
+<style id='miracle-theme'>
+body{font-family:'Segoe UI',Arial,sans-serif;background:#f8f9fa;color:#212529;}
+.navbar-brand{font-weight:600;}
+footer{margin-top:4rem;padding-top:2rem;padding-bottom:2rem;border-top:1px solid #dee2e6;font-size:.9rem;color:#6c757d;text-align:center;}
+.dark-toggle{cursor:pointer;}
+body.dark{background:#1e1e1e;color:#f1f1f1;}
+body.dark a{color:#0d6efd;}
+body.dark .navbar{background:#343a40!important;}
+</style>
+<script id="dark-toggler">function toggleTheme(){var b=document.body;b.classList.toggle('dark');localStorage.setItem('theme',b.classList.contains('dark')?'dark':'light');}window.addEventListener('load',function(){if(localStorage.getItem('theme')==='dark'){document.body.classList.add('dark');}});</script>
+</head><body class='container py-5'><nav class='navbar navbar-expand-lg navbar-light bg-light fixed-top'><div class='container-fluid'><a class='navbar-brand' href='#'>Knowledge Hub</a><button class='btn btn-sm btn-outline-primary dark-toggle' onclick='toggleTheme()'>🌙/☀️</button></div></nav><div style='height:58px'></div>
 <h1 class='mb-4'>Learn Output Portal</h1>
 <p>Below are all generated pages with enriched styles and updated content.</p>
 <div class='progress my-4' style='height:1.5rem;'>
@@ -27,4 +38,4 @@ a:hover{text-decoration:underline;}
 <a class='list-group-item list-group-item-action' href='training_logs/background_progress_tracker.html' target='_blank'>training_logs/background_progress_tracker.html</a>
 <a class='list-group-item list-group-item-action' href='training_logs/deep_learning_progress.html' target='_blank'>training_logs/deep_learning_progress.html</a>
 </div>
-</body></html>
+<footer>© 2025 Knowledge Hub – Auto-generated</footer></body></html>
