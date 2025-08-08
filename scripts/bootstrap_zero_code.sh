@@ -13,13 +13,23 @@ set -euo pipefail
 
 # 1) تحديث باقات النظام وتثبيت المتطلّبات الأساسيّة
 sudo apt-get update -y
-sudo apt-get install -y php-cli composer docker.io docker-compose-plugin
+sudo apt-get install -y php-cli composer docker.io docker-compose-plugin || sudo apt-get install -y docker-compose
+
+# Determine docker compose command
+if command -v "docker" >/dev/null 2>&1 && docker compose version >/dev/null 2>&1; then
+  DOCKER_COMPOSE_CMD="docker compose"
+elif command -v docker-compose >/dev/null 2>&1; then
+  DOCKER_COMPOSE_CMD="docker-compose"
+else
+  echo "[!] Docker Compose not found – skipping container startup." >&2
+  DOCKER_COMPOSE_CMD=""
+fi
 
 # 2) تشغيل حاويات التطوير (إن وُجد ملف docker-compose.yml)
-if [[ -f "docker-compose.yml" || -f "docker-compose.yaml" ]]; then
+if [[ -n "$DOCKER_COMPOSE_CMD" && ( -f "docker-compose.yml" || -f "docker-compose.yaml" ) ]]; then
   echo "[+] Building & starting local containers…"
-  docker compose pull --quiet || true
-  docker compose up -d --build
+  $DOCKER_COMPOSE_CMD pull --quiet || true
+  $DOCKER_COMPOSE_CMD up -d --build
 fi
 
 # 3) تثبيت تبعيات Composer لمحرّك Zero-Code
