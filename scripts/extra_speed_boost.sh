@@ -44,10 +44,13 @@ if ! composer global show humbug/box 2>/dev/null >/dev/null; then
   composer global require --optimize-autoloader humbug/box --no-interaction --no-progress
 fi
 export PATH="$HOME/.composer/vendor/bin:$HOME/.config/composer/vendor/bin:$PATH"
-box compile --working-dir=code/zero-code -o /workspace/zerocode.phar
-chmod +x zerocode.phar
-
-echo "[+] zerocode.phar built at /workspace/zerocode.phar"
+# Attempt to build PHAR
+if box compile --working-dir=code/zero-code -o /workspace/zerocode.phar; then
+  chmod +x /workspace/zerocode.phar
+  echo "[+] zerocode.phar built at /workspace/zerocode.phar"
+else
+  echo "[!] Box compilation failed. PHAR not created."
+fi
 
 # 3) Nightly composer audit cron job
 CRON_LINE="30 0 * * * cd /workspace && COMPOSER_CACHE_DIR=/mnt/ramdisk/composer-cache composer audit --format=json > logs/composer_audit.json 2>&1"
