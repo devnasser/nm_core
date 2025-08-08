@@ -1,0 +1,5 @@
+{
+  "tables": [
+    { "name": "items", "columns": { "id": "int", "name": "string", "price": "int" } }
+  ]
+}
