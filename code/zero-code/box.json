@@ -1,0 +1,8 @@
+{
+  "output": "/workspace/zerocode.phar",
+  "chmod": "0755",
+  "files": [
+    "src/*",
+    "bin/zerocode"
+  ]
+}
