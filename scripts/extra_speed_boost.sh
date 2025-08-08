@@ -44,7 +44,7 @@ if ! composer global show humbug/box 2>/dev/null >/dev/null; then
   composer global require --optimize-autoloader humbug/box --no-interaction --no-progress
 fi
 export PATH="$HOME/.composer/vendor/bin:$HOME/.config/composer/vendor/bin:$PATH"
-box compile --working-dir=code/zero-code --output=zerocode.phar
+box compile --working-dir=code/zero-code -o /workspace/zerocode.phar
 chmod +x zerocode.phar
 
 echo "[+] zerocode.phar built at /workspace/zerocode.phar"
