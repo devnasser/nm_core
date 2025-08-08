@@ -9,6 +9,7 @@
 # --------------------------------- Logging ---------------------------------
 # ensure all output (success or error) is captured
 set -euo pipefail
+trap 'echo "[!] Script exited with status $? at line $LINENO"' ERR
 LOG_FILE=/workspace/logs/extra_boost.log
 mkdir -p /workspace/logs
 exec > >(tee -a "$LOG_FILE") 2>&1
