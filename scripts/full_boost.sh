@@ -62,30 +62,39 @@ BOX_BIN="$BOX_HOME/vendor/bin/box"
 # Ensure composer global bin path in PATH
 export PATH="$BOX_HOME/vendor/bin:$PATH"
 
-# Remove old Box versions (<4) if present
-if composer global show humbug/box 2>/dev/null | grep -q '^versions:'; then
-  CURRENT_VER=$(composer global show humbug/box | grep '^versions' | awk '{print $2}')
-  if [[ "$CURRENT_VER" =~ ^3 ]]; then
-    composer global remove humbug/box --quiet || true
-  fi
-fi
+# ensure curl available
+apt-get update -qq && apt-get install -y curl >/dev/null 2>&1 || true
 
-# Install latest Box v4 if not present
-if ! box --version 2>/dev/null | grep -q '^4'; then
-  composer global require humbug/box:^4 --no-interaction --no-progress
+# Attempt composer global require box; fallback to direct download if slow
+BOX_READY=false
+{
+  timeout 120 composer global require humbug/box:^4 --no-interaction --no-progress && BOX_READY=true
+} || echo "[!] Composer install of Box timed out or failed, falling back to direct download."
+
+if [[ "$BOX_READY" == false ]]; then
+  BOX_BIN=/usr/local/bin/box
+  if [[ ! -f $BOX_BIN ]]; then
+    echo "[+] Downloading Box PHAR directly …"
+    curl -sL https://github.com/box-project/box/releases/latest/download/box.phar -o "$BOX_BIN" \
+      && chmod +x "$BOX_BIN" && echo "[✓] Box downloaded to $BOX_BIN"
+  fi
+  export PATH="/usr/local/bin:$PATH"
 fi
 
 if ! command -v box >/dev/null 2>&1; then
-  echo "[!] Box installation failed (box binary not found)."; exit 1;
+  echo "[!] Box installation still missing. Aborting PHAR build."; PHAR_SKIP=1
+else
+  echo "[✓] Box $(box --version) ready."
 fi
 
-echo "[✓] Box $(box --version) ready."
+# Skip PHAR build if box missing
+if [[ ${PHAR_SKIP:-0} -eq 0 ]]; then
 
-# ---------- Create box.json in source directory ----------
-SRC_DIR="code/zero-code"
-BOX_JSON="$SRC_DIR/box.json"
-if [[ ! -f "$BOX_JSON" ]]; then
-  cat > "$BOX_JSON" <<JSON
+  # ---------- Create box.json in source directory ----------
+  SRC_DIR="code/zero-code"
+  BOX_JSON="$SRC_DIR/box.json"
+  if [[ ! -f "$BOX_JSON" ]]; then
+    cat > "$BOX_JSON" <<JSON
 {
   "output": "/workspace/zerocode.phar",
   "chmod": "0755",
@@ -95,21 +104,20 @@ if [[ ! -f "$BOX_JSON" ]]; then
   ]
 }
 JSON
-  echo "[+] box.json created in $SRC_DIR"
+    echo "[+] box.json created in $SRC_DIR"
+  fi
+  # ---------- Compile PHAR ----------
+  if box compile --working-dir="$SRC_DIR" >/dev/null; then
+    echo "[✓] zerocode.phar built at /workspace/zerocode.phar"
+  else
+    echo "[!] Box compilation failed. zerocode.phar NOT created."
+  fi
+
+  # ---------- Nightly composer audit cron job ----------
+  CRON_JOB="30 0 * * * cd /workspace && COMPOSER_CACHE_DIR=$COMPOSER_CACHE_DIR composer audit --format=json > $LOG_DIR/composer_audit.json 2>&1"
+  (crontab -l 2>/dev/null | grep -Fv 'composer audit' ; echo "$CRON_JOB") | crontab -
+
+  echo "[✓] Nightly composer audit cronjob installed."
 fi
-
-# ---------- Compile PHAR ----------
-if box compile --working-dir="$SRC_DIR" >/dev/null; then
-  echo "[✓] zerocode.phar built at /workspace/zerocode.phar"
-else
-  echo "[!] Box compilation failed. zerocode.phar NOT created."
-fi
-
-# ---------- Nightly composer audit cron job ----------
-CRON_JOB="30 0 * * * cd /workspace && COMPOSER_CACHE_DIR=$COMPOSER_CACHE_DIR composer audit --format=json > $LOG_DIR/composer_audit.json 2>&1"
-# Remove existing job then add
-(crontab -l 2>/dev/null | grep -Fv 'composer audit' ; echo "$CRON_JOB") | crontab -
-
-echo "[✓] Nightly composer audit cronjob installed."
 
 echo "=== Full boost completed ==="
