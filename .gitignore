@@ -1,0 +1,16 @@
+# Dependencies
+vendor/
+node_modules/
+
+# Environment
+.env
+
+# Generated files
+*.sql
+code/zero-code/generated.sql
+*.log
+
+# IDE / Editor files
+.vscode/
+.idea/
+.DS_Store

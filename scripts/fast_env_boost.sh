@@ -25,17 +25,16 @@ if ! mountpoint -q "$RAMDISK"; then
   sudo mount -t tmpfs -o size=1G tmpfs "$RAMDISK"
 fi
 export COMPOSER_CACHE_DIR="$RAMDISK/composer"
-export NPM_CONFIG_CACHE="$RAMDISK/npm"
-mkdir -p "$COMPOSER_CACHE_DIR" "$NPM_CONFIG_CACHE"
+mkdir -p "$COMPOSER_CACHE_DIR"
 
-echo "[+] Composer & NPM cache directories set in RAM-disk"
+echo "[+] Composer cache directory set in RAM-disk"
 
 # Skipping docker compose startup as per policy (no containers).
 
 ## 4) تثبيت اعتمادات PHP + JS إن لم تكن موجودة
 if [[ -f code/zero-code/composer.json ]]; then
   pushd code/zero-code >/dev/null
-  composer install --no-interaction --prefer-dist --no-progress
+  composer install --no-interaction --prefer-dist --no-progress --optimize-autoloader --no-dev
   popd >/dev/null
 fi
 
