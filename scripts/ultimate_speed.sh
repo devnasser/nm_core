@@ -56,9 +56,17 @@ composer config --global cache-dir $CACHE_DIR || true
 echo "[+] Composer cache set to $CACHE_DIR"
 
 # 4) Install Pest parallel + coverage stub if not present
-if ! composer show --working-dir=code/zero-code pestphp/pest-parallel >/dev/null 2>&1; then
-  composer require --dev --working-dir=code/zero-code pestphp/pest-parallel jetbrains/phpstorm-coverage-stub --no-interaction --no-progress
-  echo "[+] Pest parallel & coverage stub installed."
+# Skip composer install when OFFLINE=1
+if [[ "${OFFLINE:-0}" -eq 1 ]]; then
+  echo "[!] OFFLINE=1 – skipping composer dev packages."
+else
+  if ! composer show --working-dir=code/zero-code pestphp/pest-parallel >/dev/null 2>&1; then
+    composer require --dev --working-dir=code/zero-code \
+      pestphp/pest-parallel jetbrains/phpstorm-coverage-stub \
+      --no-interaction --no-progress \
+      || echo "[!] Composer dev packages failed – skipped."
+    echo "[+] Pest parallel & coverage stub installed."
+  fi
 fi
 # Add Make target if absent
 if ! grep -q '^coverage:' Makefile 2>/dev/null; then

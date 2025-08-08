@@ -10,3 +10,6 @@ test:
 
 up:
 	docker compose up -d --build || docker-compose up -d --build
+
+coverage:
+	vendor/bin/pest --parallel --coverage --min=80
