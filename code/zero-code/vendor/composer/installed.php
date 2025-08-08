@@ -3,7 +3,7 @@
         'name' => 'acme/zero-code',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '1e064ae2c05f027a599b4a4ffc2a7b9b11136aeb',
+        'reference' => 'e63c873273a47a30c947e2a5912452a5ba969e66',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -13,7 +13,7 @@
         'acme/zero-code' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '1e064ae2c05f027a599b4a4ffc2a7b9b11136aeb',
+            'reference' => 'e63c873273a47a30c947e2a5912452a5ba969e66',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
