@@ -56,20 +56,30 @@ mkdir -p "$COMPOSER_CACHE_DIR"
 echo "[+] Composer cache dir set to $COMPOSER_CACHE_DIR"
 
 # ---------- Install/upgrade Box CLI ----------
-BOX_BIN="$HOME/.config/composer/vendor/bin/box"
+BOX_HOME=$(composer global config home 2>/dev/null || echo "$HOME/.config/composer")
+BOX_BIN="$BOX_HOME/vendor/bin/box"
+
+# Ensure composer global bin path in PATH
+export PATH="$BOX_HOME/vendor/bin:$PATH"
 
 # Remove old Box versions (<4) if present
 if composer global show humbug/box 2>/dev/null | grep -q '^versions:'; then
-  composer global remove humbug/box --quiet || true
+  CURRENT_VER=$(composer global show humbug/box | grep '^versions' | awk '{print $2}')
+  if [[ "$CURRENT_VER" =~ ^3 ]]; then
+    composer global remove humbug/box --quiet || true
+  fi
 fi
 
-# Install latest Box v4 (supports box.json)
-composer global require humbug/box:^4 --no-interaction --no-progress
-export PATH="$HOME/.config/composer/vendor/bin:$PATH"
+# Install latest Box v4 if not present
+if ! box --version 2>/dev/null | grep -q '^4'; then
+  composer global require humbug/box:^4 --no-interaction --no-progress
+fi
 
-box --version || { echo "[!] Box installation failed."; exit 1; }
+if ! command -v box >/dev/null 2>&1; then
+  echo "[!] Box installation failed (box binary not found)."; exit 1;
+fi
 
-echo "[✓] Box $(box --version) installed."
+echo "[✓] Box $(box --version) ready."
 
 # ---------- Create box.json in source directory ----------
 SRC_DIR="code/zero-code"
