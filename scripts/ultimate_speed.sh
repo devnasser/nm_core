@@ -22,7 +22,7 @@ PRELOAD_FILE=/workspace/preload.php
 
 # 1) Preload setup
 if [[ ! -f $PRELOAD_FILE ]]; then
-  echo "<?php foreach (glob(__DIR__.'/code/zero-code/src/*.php') as $f) opcache_compile_file($f);" > $PRELOAD_FILE
+  echo "<?php foreach (glob(__DIR__.'/code/zero-code/src/*.php') as \$f) opcache_compile_file(\$f);" > $PRELOAD_FILE
   echo "[+] preload.php created."
 fi
 if [[ $EUID -eq 0 ]]; then
