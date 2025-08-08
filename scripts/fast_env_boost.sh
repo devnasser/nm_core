@@ -16,7 +16,13 @@ cd "$ROOT_DIR"
 
 ## 1) تثبيت الحزم الأساس (PHP, Composer, Node, Docker)
 sudo apt-get update -y
-sudo apt-get install -y php-cli composer
+sudo apt-get install -y php-cli composer php-opcache
+# Enable OPcache for CLI if not already
+if ! php -i | grep -q "opcache.enable_cli => On"; then
+  PHP_INI_DIR=$(php -r 'echo PHP_CONFIG_FILE_SCAN_DIR;')
+  echo 'opcache.enable_cli=1' | sudo tee "$PHP_INI_DIR/99-opcache-cli.ini" >/dev/null
+  echo "[+] Enabled opcache.enable_cli=1"
+fi
 
 ## 2) إنشاء RAM-disk للكاش (1 جيجابايت)
 RAMDISK=/mnt/ramdisk
