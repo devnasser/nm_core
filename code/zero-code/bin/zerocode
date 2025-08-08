@@ -1,0 +1,35 @@
+#!/usr/bin/env php
+<?php
+
+require __DIR__ . '/../vendor/autoload.php';
+
+use ZeroCode\ZeroCodeEngine;
+
+if ($argc < 2) {
+    fwrite(STDERR, "Usage: zerocode <schema.json>\n");
+    exit(1);
+}
+
+$schemaPath = $argv[1];
+if (!file_exists($schemaPath)) {
+    fwrite(STDERR, "Schema file not found: $schemaPath\n");
+    exit(1);
+}
+
+$schema = json_decode(file_get_contents($schemaPath), true);
+if ($schema === null) {
+    fwrite(STDERR, "Invalid JSON schema\n");
+    exit(1);
+}
+
+$engine = new ZeroCodeEngine();
+$result = $engine->generateSystem($schema);
+
+file_put_contents('generated.sql', $result['sql']);
+
+foreach ($result['controllers'] as $model => $controllerCode) {
+    $filename = "{$model}Controller.php";
+    file_put_contents($filename, $controllerCode);
+}
+
+echo "Generation complete. SQL and controllers generated.\n";
