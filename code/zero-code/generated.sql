@@ -1,0 +1,1 @@
+CREATE TABLE IF NOT EXISTS `products` (`id` INT, `name` VARCHAR(255), `price` INT, `created_at` DATETIME);
