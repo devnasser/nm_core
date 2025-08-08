@@ -23,3 +23,8 @@ archive/
 logs/
 *.sql
 *Controller.php
+archive/
+
+logs/
+*.sql
+*Controller.php
