@@ -22,7 +22,7 @@ PRELOAD_FILE=/workspace/preload.php
 
 # 1) Preload setup
 if [[ ! -f $PRELOAD_FILE ]]; then
-  echo "<?php foreach (glob(__DIR__.'/code/zero-code/src/*.php') as \$f) opcache_compile_file(\$f);" > $PRELOAD_FILE
+  echo "<?php foreach (glob(__DIR__.'/code/zero_code/src/*.php') as \$f) opcache_compile_file(\$f);" > $PRELOAD_FILE
   echo "[+] preload.php created."
 fi
 if [[ $EUID -eq 0 ]]; then
@@ -60,8 +60,8 @@ echo "[+] Composer cache set to $CACHE_DIR"
 if [[ "${OFFLINE:-0}" -eq 1 ]]; then
   echo "[!] OFFLINE=1 – skipping composer dev packages."
 else
-  if ! composer show --working-dir=code/zero-code pestphp/pest-parallel >/dev/null 2>&1; then
-    composer require --dev --working-dir=code/zero-code \
+  if ! composer show --working-dir=code/zero_code pestphp/pest-parallel >/dev/null 2>&1; then
+    composer require --dev --working-dir=code/zero_code \
       pestphp/pest-parallel jetbrains/phpstorm-coverage-stub \
       --no-interaction --no-progress \
       || echo "[!] Composer dev packages failed – skipped."
@@ -80,7 +80,7 @@ if [[ ! -f $HOOK ]]; then
   cat > $HOOK <<'H'
 #!/usr/bin/env bash
 if command -v box >/dev/null 2>&1; then
-  box compile --working-dir=code/zero-code -q || echo "[post-merge] Box compile failed." >&2
+  box compile --working-dir=code/zero_code -q || echo "[post-merge] Box compile failed." >&2
 fi
 H
   chmod +x $HOOK

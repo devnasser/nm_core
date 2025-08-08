@@ -46,7 +46,7 @@ if ! composer global show humbug/box 2>/dev/null >/dev/null; then
 fi
 export PATH="$HOME/.composer/vendor/bin:$HOME/.config/composer/vendor/bin:$PATH"
 # Attempt to build PHAR
-if box compile --working-dir=code/zero-code -o /workspace/zerocode.phar; then
+if box compile --working-dir=code/zero_code -o /workspace/zerocode.phar; then
   chmod +x /workspace/zerocode.phar
   echo "[+] zerocode.phar built at /workspace/zerocode.phar"
 else

@@ -14,3 +14,7 @@ code/zero-code/generated.sql
 .vscode/
 .idea/
 .DS_Store
+archive/
+logs/
+*.sql
+*Controller.php

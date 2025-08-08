@@ -91,7 +91,7 @@ fi
 if [[ ${PHAR_SKIP:-0} -eq 0 ]]; then
 
   # ---------- Create box.json in source directory ----------
-  SRC_DIR="code/zero-code"
+  SRC_DIR="code/zero_code"
   BOX_JSON="$SRC_DIR/box.json"
   if [[ ! -f "$BOX_JSON" ]]; then
     cat > "$BOX_JSON" <<JSON

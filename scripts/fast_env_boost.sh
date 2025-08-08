@@ -38,8 +38,8 @@ echo "[+] Composer cache directory set in RAM-disk"
 # Skipping docker compose startup as per policy (no containers).
 
 ## 4) تثبيت اعتمادات PHP + JS إن لم تكن موجودة
-if [[ -f code/zero-code/composer.json ]]; then
-  pushd code/zero-code >/dev/null
+if [[ -f code/zero_code/composer.json ]]; then
+  pushd code/zero_code >/dev/null
   composer install --no-interaction --prefer-dist --no-progress --optimize-autoloader --no-dev
   popd >/dev/null
 fi
@@ -54,7 +54,7 @@ install:
 	npm ci --prefer-offline --no-audit --progress=false
 
 gen:
-	php code/zero-code/bin/zerocode schema.json
+	php code/zero_code/bin/zerocode schema.json
 
 test:
 	vendor/bin/pest --parallel || vendor/bin/phpunit --colors

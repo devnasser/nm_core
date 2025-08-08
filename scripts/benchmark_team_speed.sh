@@ -4,7 +4,7 @@
 #   for each team member's representative task.
 # ------------------------------------------------------------
 set -euo pipefail
-cd "$(dirname "$0")/../code/zero-code"
+cd "$(dirname "$0")/../code/zero_code"
 
 # determine php binary
 PHP_BIN=$(command -v php)

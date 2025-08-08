@@ -33,7 +33,7 @@ if [[ -n "$DOCKER_COMPOSE_CMD" && ( -f "docker-compose.yml" || -f "docker-compos
 fi
 
 # 3) تثبيت تبعيات Composer لمحرّك Zero-Code
-pushd code/zero-code >/dev/null
+pushd code/zero_code >/dev/null
 if [[ ! -f vendor/autoload.php ]]; then
   echo "[+] Installing PHP dependencies (Composer)…"
   composer install --no-interaction --no-progress --prefer-dist
