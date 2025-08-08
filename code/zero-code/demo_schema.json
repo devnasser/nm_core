@@ -1,1 +1,13 @@
-{"tables":[{"name":"products","columns":{"id":"int","name":"string","price":"int","created_at":"datetime"}}]}
+{
+  "tables": [
+    {
+      "name": "products",
+      "columns": {
+        "id": "int",
+        "name": "string",
+        "price": "int",
+        "created_at": "datetime"
+      }
+    }
+  ]
+}
