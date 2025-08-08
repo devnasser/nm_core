@@ -1,13 +1,6 @@
 {
   "tables": [
-    {
-      "name": "products",
-      "columns": {
-        "id": "int",
-        "name": "string",
-        "price": "int",
-        "created_at": "datetime"
-      }
-    }
+    { "name": "posts", "columns": { "id": "int", "title": "string", "body": "text" } },
+    { "name": "comments", "columns": { "id": "int", "post_id": "int", "content": "text" } }
   ]
 }
