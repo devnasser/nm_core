@@ -6,7 +6,15 @@
 # • Builds zerocode.phar via humbug/box for ultra-fast execution
 # • Adds nightly composer audit cronjob (00:30)
 # ------------------------------------------------------------
+# --------------------------------- Logging ---------------------------------
+# ensure all output (success or error) is captured
 set -euo pipefail
+LOG_FILE=/workspace/logs/extra_boost.log
+mkdir -p /workspace/logs
+exec > >(tee -a "$LOG_FILE") 2>&1
+
+# ---------------------------------------------------------------------------
+
 cd "$(dirname "$0")/.."   # /workspace root
 
 PHP_VER="$(php -r 'echo PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;')"
@@ -48,7 +56,3 @@ CRON_LINE="30 0 * * * cd /workspace && COMPOSER_CACHE_DIR=/mnt/ramdisk/composer-
 echo "[+] Nightly composer audit task added to crontab."
 
 echo -e "\n✅ Extra speed boost applied. Use: php zerocode.phar schema.json"
-
-LOG_FILE=/workspace/logs/extra_boost.log
-mkdir -p /workspace/logs
-exec > >(tee -a "$LOG_FILE") 2>&1
