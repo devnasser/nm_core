@@ -48,3 +48,7 @@ CRON_LINE="30 0 * * * cd /workspace && COMPOSER_CACHE_DIR=/mnt/ramdisk/composer-
 echo "[+] Nightly composer audit task added to crontab."
 
 echo -e "\n✅ Extra speed boost applied. Use: php zerocode.phar schema.json"
+
+LOG_FILE=/workspace/logs/extra_boost.log
+mkdir -p /workspace/logs
+exec > >(tee -a "$LOG_FILE") 2>&1
