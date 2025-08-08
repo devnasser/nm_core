@@ -16,7 +16,7 @@ cd "$ROOT_DIR"
 
 ## 1) تثبيت الحزم الأساس (PHP, Composer, Node, Docker)
 sudo apt-get update -y
-sudo apt-get install -y php-cli composer nodejs npm docker.io docker-compose-plugin || sudo apt-get install -y docker-compose
+sudo apt-get install -y php-cli composer
 
 ## 2) إنشاء RAM-disk للكاش (1 جيجابايت)
 RAMDISK=/mnt/ramdisk
@@ -30,18 +30,7 @@ mkdir -p "$COMPOSER_CACHE_DIR" "$NPM_CONFIG_CACHE"
 
 echo "[+] Composer & NPM cache directories set in RAM-disk"
 
-## 3) تشغيل حاويات docker-compose إن وُجدت
-if [[ -f docker-compose.yml || -f docker-compose.yaml ]]; then
-  if command -v "docker" >/dev/null 2>&1; then
-    COMPOSE_CMD="docker compose"
-    if ! $COMPOSE_CMD version >/dev/null 2>&1; then
-      COMPOSE_CMD="docker-compose"
-    fi
-    echo "[+] Starting containers via $COMPOSE_CMD …"
-    $COMPOSE_CMD pull --quiet || true
-    $COMPOSE_CMD up -d --build
-  fi
-fi
+# Skipping docker compose startup as per policy (no containers).
 
 ## 4) تثبيت اعتمادات PHP + JS إن لم تكن موجودة
 if [[ -f code/zero-code/composer.json ]]; then
@@ -50,9 +39,7 @@ if [[ -f code/zero-code/composer.json ]]; then
   popd >/dev/null
 fi
 
-if [[ -f package.json ]]; then
-  npm ci --prefer-offline --no-audit --progress=false
-fi
+# Skipping Node/npm operations as per policy.
 
 ## 5) توليد Makefile إن لم يكن موجوداً (اختصارات)
 if [[ ! -f Makefile ]]; then
